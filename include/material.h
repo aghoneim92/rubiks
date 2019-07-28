@@ -1,7 +1,7 @@
 #ifndef __MATERIAL_H__
 #define __MATERIAL_H__
 
-#include "include/Angel.h"
+#include "Angel.h"
 
 // for material values see this link
 //  http://devernay.free.fr/cours/opengl/materials.html

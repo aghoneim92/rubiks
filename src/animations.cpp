@@ -22,7 +22,7 @@ void rotateFace(int animIndex){
 		}
 		else{
 			if(rubiksCube->checkWin()){
-				PlaySound(TEXT("win.wav"), NULL, SND_ASYNC);
+//				PlaySound(TEXT("win.wav"), NULL, SND_ASYNC);
 			    initGlowStep();
 				glowCube(0);
 
@@ -304,7 +304,7 @@ void animateHarlemShake2(int animIndex){
 					if(squeezes[i][j][k])
 						rubiksCube->scaleCubelet(i,j,k, sin(animIndex*2*M_PI/52.0f)*vec3( 1-10/shakeMag[i][j][k].x,
 						1-10/shakeMag[i][j][k].y,
-						1-10/shakeMag[i][j][k].z )+1.0f);
+						1-10/shakeMag[i][j][k].z )+vec3(1.0f));
 					break;
 				case Rotate:
 
@@ -333,7 +333,7 @@ void animateHarlemShake3(int animIndex){
 					if(squeezes[i][j][k])
 						rubiksCube->scaleCubelet(i,j,k, sin(animIndex*2*M_PI/200.0f)*vec3( 1-10/shakeMag[i][j][k].x,
 						1-10/shakeMag[i][j][k].y,
-						1-10/shakeMag[i][j][k].z )+1.0f);
+						1-10/shakeMag[i][j][k].z )+vec3(1.0f));
 					break;
 				case Rotate:
 

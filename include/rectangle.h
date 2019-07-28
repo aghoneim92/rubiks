@@ -1,7 +1,7 @@
 #ifndef __RECTANGLE_H__
 #define __RECTANGLE_H__
 
-#include "include/drawable.h"
+#include "drawable.h"
 
 class Rectangle : public Drawable {
     public:

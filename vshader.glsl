@@ -1,6 +1,6 @@
-#version 150
-in vec4 vPosition;
-in vec3 vNormal;
+// #version 150
+attribute vec4 vPosition;
+attribute vec3 vNormal;
 
 uniform mat4 model_view;
 uniform mat4 projection;
@@ -29,17 +29,17 @@ uniform float windowWidth;
 uniform float windowHeight;
 uniform int left;
 // send the normals to each vertex so the fragment shader get the interpolated value of the normals
-out vec3 N;
+varying vec3 N;
 //same for K and E vectors
-out vec3 L;
-out vec3 E;
+varying vec3 L;
+varying vec3 E;
 
 void main()
 {
-	mat4 ms = mat4(scale.x, 		0.0f,	0.0f,	0.0f,
-				   0.0f,		scale.y,	0.0f,	0.0f,
-				   0.0f,		0.0f,	scale.z,	0.0f,
-				   0.0f,		0.0f,	0.0f,	1.0f);
+	mat4 ms = mat4(scale.x, 		0.0,	0.0,	0.0,
+				   0.0,		scale.y,	0.0,	0.0,
+				   0.0,		0.0,	scale.z,	0.0,
+				   0.0,		0.0,	0.0,	1.0);
 				   
 	mat4 mt = mat4(1,				0,				0,				0,
 				   0,				1,				0,				0,
@@ -88,7 +88,7 @@ void main()
 		gl_Position = projection*model_view*transform2;/*vec4(before3D.x/2+left*0.5, before3D.y, before3D.z, before3D.w);*/
 	}
     else
-		gl_Position = ms*vec4(2*(vPosition.x+translation.x)/windowWidth, 2*(vPosition.y+translation.y)/windowHeight, vPosition.z+translation.z,1);
+		gl_Position = ms*vec4(2.0*(vPosition.x+translation.x)/windowWidth, 2.0*(vPosition.y+translation.y)/windowHeight, vPosition.z+translation.z,1.0);
     N = normalize(vNormal.xyz);
     L = normalize(light_position.xyz - vPosition.xyz);
     E = normalize(eye_position - vPosition).xyz;

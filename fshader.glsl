@@ -1,8 +1,8 @@
-#version 150
+// #version 150
 
-in vec3 N;
-in vec3 L;
-in vec3 E;
+varying vec3 N;
+varying vec3 L;
+varying vec3 E;
 
 uniform vec4 ambient_product;
 uniform vec4 diffuse_product;
@@ -52,7 +52,7 @@ void main()
 		beforeEffects = vec4(redChrome*grayValue,greenChrome*grayValue,blueChrome*grayValue,1.0);
 	}
 	if(darkEffect){
-		beforeEffects/=2;
+		beforeEffects/=2.0;
 	}
 	//final shading
     gl_FragColor = beforeEffects;

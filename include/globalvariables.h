@@ -1,9 +1,9 @@
 #ifndef GLOBALVARIABLES_H
 #define GLOBALVARIABLES_H
-#define CROSS_PLATFORM 0
-#include "include/Angel.h"
-#include "include/drawable.h"
-#include "include/rubikscube.h"
+#define CROSS_PLATFORM 1
+#include "Angel.h"
+#include "drawable.h"
+#include "rubikscube.h"
 #include <vector>
 #include <string>
 

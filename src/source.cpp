@@ -1,21 +1,22 @@
-#include "include/globalvariables.h"
+#include <globalvariables.h>
 #include <cmath>
 #include <iostream>
 #include <stdlib.h>
 #include <cstdlib>
-#include "include/Angel.h"
-#include "material.h"
-#include "light_source.h"
+#include <Angel.h>
+#include <material.h>
+#include <light_source.h>
 #if !CROSS_PLATFORM
 #include <Windows.h>
 #include <mmsystem.h>
+#include <sapi.h>
 #endif
 #include <ctime>
-#include "include/rubikscube.h"
+#include <rubikscube.h>
 #include "initfunctions.h"
 #include "animations.h"
 #include "inputfunctions.h"
-#include <sapi.h>
+
 
 void renderAll(){
 	for (unsigned int i=0;i<shapes.size();i++){
@@ -75,9 +76,9 @@ int main( int argc, char **argv ){
 		WindowWidth = (GLfloat)glutGet(GLUT_SCREEN_WIDTH);
 	}
 	glutInitDisplayMode( GLUT_RGBA  | GLUT_DEPTH | GLUT_DOUBLE | GLUT_MULTISAMPLE );
-	glEnable(GL_MULTISAMPLE_ARB);
-	glEnable (GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// glEnable(GL_MULTISAMPLE_ARB);
+	// glEnable (GL_BLEND);
+	// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glutInitWindowSize( (int)(WindowWidth),(int) WindowHeight);
 	glutCreateWindow( "Rubik's Cube" );
 	
@@ -85,13 +86,13 @@ int main( int argc, char **argv ){
 
 	if(fullScreen) glutFullScreen();
 
-	glewInit();
+//	glewInit();
 
 	init();
 	glutDisplayFunc( display );
 	glutKeyboardFunc( keyboard );
 	glutSpecialFunc(special);
-	glutCloseFunc( cleanup );
+//	glutCloseFunc( cleanup );
 	glutTimerFunc(16,redisplay,0);
 	glLineWidth(1);
 	glutTimerFunc(10,floatView,0);

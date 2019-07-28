@@ -1,7 +1,7 @@
 #ifndef __LIGHT_SOURCE_H__
 #define __LIGHT_SOURCE_H__
 
-#include "include/Angel.h"
+#include "Angel.h"
 
 class LightSource {
     public:

@@ -1,7 +1,7 @@
 #ifndef INPUTFUNCTIONS_H
 #define INPUTFUNCTIONS_H
-#include "include\Angel.h"
-#include "include\globalvariables.h"
+#include "Angel.h"
+#include "globalvariables.h"
 #include "animations.h"
 
 void keyboard( unsigned char key, int x, int y );

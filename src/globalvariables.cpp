@@ -1,4 +1,4 @@
-#include "include/globalvariables.h"
+#include <globalvariables.h>
 
 //<--Shader variable locations
 

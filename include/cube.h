@@ -1,7 +1,7 @@
 #ifndef __CUBE_H__
 #define __CUBE_H__
 
-#include "include/drawable.h"
+#include "drawable.h"
 #include <vector>
 
 class Cube : public Drawable {

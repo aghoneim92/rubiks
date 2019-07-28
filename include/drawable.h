@@ -1,7 +1,7 @@
 #ifndef __DRAWABLE_H__
 #define __DRAWABLE_H__
 
-#include "include/Angel.h"
+#include "Angel.h"
 #include "material.h"
 #include "light_source.h"
 #include <vector>

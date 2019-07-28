@@ -1,4 +1,5 @@
-#include "include/rubikscube.h"
+#include "rubikscube.h"
+#include <cfloat>
 
 void RubiksCube::glowRimsFront(int index, int nFrames, short direction){
 	int i,j;

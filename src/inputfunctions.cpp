@@ -1,4 +1,5 @@
 #include "inputfunctions.h"
+#include <cfloat>
 
 void special(int key, int x, int y){
 	switch(key){
@@ -240,7 +241,7 @@ void anyKey(unsigned char key){
 						harlemShaked = false;
 					}
 					else{
-						PlaySound(TEXT("h.wav"), NULL, SND_ASYNC);
+//						PlaySound(TEXT("h.wav"), NULL, SND_ASYNC);
 						animateHarlemShake1(0);
 					}
 					break;
