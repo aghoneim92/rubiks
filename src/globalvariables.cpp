@@ -40,8 +40,8 @@ GLuint left_loc;
 //<--Viewing variables
 const bool fullScreen=false;
 //Default non-fullscreen window width and height
-GLfloat WindowWidth = 400;
-GLfloat WindowHeight = 400;
+GLfloat WindowWidth = 600;
+GLfloat WindowHeight = 600;
 
 float theta = 0;
 float phi = 0;
