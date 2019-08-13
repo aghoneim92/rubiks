@@ -1,4 +1,4 @@
-#include "cube.h"
+#include <cube.h>
 
 Cube::Cube(vec4 center, float width, float height, float depth)
 {

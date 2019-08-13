@@ -3,7 +3,8 @@
 #include "cubelet.h"
 #include "vecInt.h"
 
-class RubiksCube:public DrawableGroup{
+class RubiksCube : public DrawableGroup
+{
 public:
 	RubiksCube();
 	bool checkWin();
@@ -28,10 +29,11 @@ public:
 	void glowRimsSide(int index, int nFrames, short direction);
 	void resetRimsSide(int index);
 
-	void translateCubelet(int i,int j, int k, vec3 translation);
+	void translateCubelet(int i, int j, int k, vec3 translation);
 	void translateCubeletNormal(int i, int j, int k, vec3 translation);
 	void scaleCubelet(int i, int j, int k, vec3 scale);
 	void rotateCubelet(int i, int j, int k, vec3 rotation);
+
 private:
 	Cubelet cubelets[3][3][3];
 	vec3Int indices[3][3][3];

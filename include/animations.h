@@ -1,6 +1,6 @@
 #ifndef ANIMATIONS_H
 #define ANIMATIONS_H
-#include "globalvariables.h"
+#include <globalvariables.h>
 #if !CROSS_PLATFORM
 #include <Windows.h>
 #include <mmsystem.h>

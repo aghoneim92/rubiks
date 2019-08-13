@@ -1,0 +1,6 @@
+{
+  "files.associations": {
+    "*.mjs": "javascript",
+    "vector": "cpp"
+  }
+}
