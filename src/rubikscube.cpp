@@ -468,22 +468,22 @@ RubiksCube::RubiksCube()
 bool RubiksCube::assemble()
 {
 	int i;
-	bool ret = false;
+	bool ret = true;
 	for (i = 0; i < _size; i++)
 	{
 		if (abs(children[i]->translation.x) > FLT_EPSILON)
 		{
-			ret = true;
+			ret = false;
 			children[i]->translation.x += children[i]->translation.x > 0 ? -1 : 1;
 		}
 		if (abs(children[i]->translation.y) > FLT_EPSILON)
 		{
-			ret = true;
+			ret = false;
 			children[i]->translation.y += children[i]->translation.y > 0 ? -1 : 1;
 		}
 		if (abs(children[i]->translation.z) > FLT_EPSILON)
 		{
-			ret = true;
+			ret = false;
 			children[i]->translation.z += children[i]->translation.z > 0 ? -1 : 1;
 		}
 	}

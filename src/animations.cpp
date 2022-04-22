@@ -179,7 +179,7 @@ void floatView(int animIndex)
 		glutTimerFunc(10, floatView, animIndex);
 		return;
 	}
-	if (animIndex == 400 && dir == 'l')
+	if (animIndex == 100 && dir == 'l')
 	{
 #if !CROSS_PLATFORM
 		PlaySound(TEXT("swoosh2.wav"), NULL, SND_ASYNC);
@@ -187,8 +187,10 @@ void floatView(int animIndex)
 		animateAssemble(0);
 		return;
 	}
-	else if (start && dir == 'r')
+	else if (animIndex == 50 && dir == 'r')
 	{
+		stopAnim = true;
+		start = true;
 		shuffle();
 		return;
 	}
@@ -204,8 +206,10 @@ void animateAssemble(int unused)
 #endif
 	mat4 rotation = RotateY(-10);
 	eye = rotation * eye;
-	if (rubiksCube->assemble())
-		glutTimerFunc(20, animateAssemble, 0);
+	if (!rubiksCube->assemble())
+	{
+		glutTimerFunc(10, animateAssemble, 0);
+	}
 	else
 	{
 		dir = 'r';
@@ -246,8 +250,8 @@ void animateLSD(int animIndex)
 		return;
 	}
 	GLfloat xScale = xScaleAmp * sin(2.0f * M_PI * animIndex / (n - 1)) + 1.0f,
-					yScale = yScaleAmp * sin(2.0f * M_PI * animIndex / (n - 1)) + 1.0f,
-					zScale = zScaleAmp * sin(2.0f * M_PI * animIndex / (n - 1)) + 1.0f;
+			yScale = yScaleAmp * sin(2.0f * M_PI * animIndex / (n - 1)) + 1.0f,
+			zScale = zScaleAmp * sin(2.0f * M_PI * animIndex / (n - 1)) + 1.0f;
 	for (i = 0; i < shapes.size(); i++)
 	{
 		shapes[i]->scale = vec3(xScale, yScale, zScale);
@@ -296,7 +300,7 @@ void animateHarlemShake1(int animIndex)
 				for (k = 0; k < 3; k++)
 				{
 					rubiksCube->translateCubelet(i, j, k,
-																			 vec3(rand() % maxX + 1, rand() % maxY + 1, rand() % maxZ + 1));
+												 vec3(rand() % maxX + 1, rand() % maxY + 1, rand() % maxZ + 1));
 					shakeDecision = rand() % 10;
 					if (shakeDecision < 6)
 					{
