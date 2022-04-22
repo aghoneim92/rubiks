@@ -2,5 +2,7 @@
   "files.associations": {
     "*.mjs": "javascript",
     "vector": "cpp"
-  }
+  },
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true
 }
