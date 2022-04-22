@@ -37,7 +37,7 @@ GLuint left_loc;
 //Shader variable locations-->
 
 //<--Viewing variables
-const bool fullScreen = false;
+const bool fullScreen = true;
 //Default non-fullscreen window width and height
 GLfloat WindowWidth = 600;
 GLfloat WindowHeight = 600;
