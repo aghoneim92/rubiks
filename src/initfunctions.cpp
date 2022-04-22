@@ -134,7 +134,7 @@ void init()
 	viewMode = PERSPECTIVE_WITH_FOV;
 	setup_view();
 
-	glClearColor(0.0, 0.0, 0.0, 1.0); // white background
+	glClearColor(1.0, 1.0, 1.0, 1.0); // white background
 }
 
 void cleanup()
