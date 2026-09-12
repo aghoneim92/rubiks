@@ -403,12 +403,10 @@ class mat4 {
 
     mat4( const mat4& m )
 	{
-	    if ( *this != m ) {
-		_m[0] = m._m[0];
-		_m[1] = m._m[1];
-		_m[2] = m._m[2];
-		_m[3] = m._m[3];
-	    } 
+	    _m[0] = m._m[0];
+	    _m[1] = m._m[1];
+	    _m[2] = m._m[2];
+	    _m[3] = m._m[3];
 	}
 
     //
@@ -818,6 +816,61 @@ mat4 identity()
     for(int i=0; i<4; i++) for(int j=0; j<4; j++) c[i][j]=0.0;
     for(int i=0; i<4; i++) c[i][i] = 1.0;
     return c;
+}
+
+
+//----------------------------------------------------------------------------
+//
+//  Inverse of a general 4x4 matrix (cofactor expansion).  Used to turn window
+//  coordinates back into world coordinates when picking.
+//
+inline
+mat4 Inverse( const mat4& m )
+{
+    const GLfloat a00 = m[0][0], a01 = m[0][1], a02 = m[0][2], a03 = m[0][3];
+    const GLfloat a10 = m[1][0], a11 = m[1][1], a12 = m[1][2], a13 = m[1][3];
+    const GLfloat a20 = m[2][0], a21 = m[2][1], a22 = m[2][2], a23 = m[2][3];
+    const GLfloat a30 = m[3][0], a31 = m[3][1], a32 = m[3][2], a33 = m[3][3];
+
+    const GLfloat s0 = a00*a11 - a10*a01;
+    const GLfloat s1 = a00*a12 - a10*a02;
+    const GLfloat s2 = a00*a13 - a10*a03;
+    const GLfloat s3 = a01*a12 - a11*a02;
+    const GLfloat s4 = a01*a13 - a11*a03;
+    const GLfloat s5 = a02*a13 - a12*a03;
+
+    const GLfloat c5 = a22*a33 - a32*a23;
+    const GLfloat c4 = a21*a33 - a31*a23;
+    const GLfloat c3 = a21*a32 - a31*a22;
+    const GLfloat c2 = a20*a33 - a30*a23;
+    const GLfloat c1 = a20*a32 - a30*a22;
+    const GLfloat c0 = a20*a31 - a30*a21;
+
+    const GLfloat det = s0*c5 - s1*c4 + s2*c3 + s3*c2 - s4*c1 + s5*c0;
+    const GLfloat invdet = GLfloat(1.0) / det;
+
+    mat4 r;
+    r[0][0] = ( a11*c5 - a12*c4 + a13*c3) * invdet;
+    r[0][1] = (-a01*c5 + a02*c4 - a03*c3) * invdet;
+    r[0][2] = ( a31*s5 - a32*s4 + a33*s3) * invdet;
+    r[0][3] = (-a21*s5 + a22*s4 - a23*s3) * invdet;
+
+    r[1][0] = (-a10*c5 + a12*c2 - a13*c1) * invdet;
+    r[1][1] = ( a00*c5 - a02*c2 + a03*c1) * invdet;
+    r[1][2] = (-a30*s5 + a32*s2 - a33*s1) * invdet;
+    r[1][3] = ( a20*s5 - a22*s2 + a23*s1) * invdet;
+
+    r[2][0] = ( a10*c4 - a11*c2 + a13*c0) * invdet;
+    r[2][1] = (-a00*c4 + a01*c2 - a03*c0) * invdet;
+    r[2][2] = ( a30*s4 - a31*s2 + a33*s0) * invdet;
+    r[2][3] = (-a20*s4 + a21*s2 - a23*s0) * invdet;
+
+    r[3][0] = (-a10*c3 + a11*c1 - a12*c0) * invdet;
+    r[3][1] = ( a00*c3 - a01*c1 + a02*c0) * invdet;
+    r[3][2] = (-a30*s3 + a31*s1 - a32*s0) * invdet;
+    r[3][3] = ( a20*s3 - a21*s1 + a22*s0) * invdet;
+
+    return r;
 }
 
 

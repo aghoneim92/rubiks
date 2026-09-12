@@ -2,31 +2,26 @@
 #define __CUBE_H__
 
 #include "drawable.h"
-#include <vector>
 
-class Cube : public Drawable {
-    public:
-        //constructors
-        Cube(vec4 center, float width ,float hight, float depth);
+// Wireframe box.
+class Cube : public Drawable
+{
+public:
+	Cube(vec4 center, float width, float height, float depth);
 
-        //methods
-        virtual void render();
-        virtual void calculateNormals();
-
-        //destructor
-        ~Cube();
+	void render() override;
+	// Wireframe cubes are not shaded, so they need no normals.
+	void calculateNormals() override {}
 };
 
-class FilledCube : public Drawable {
-    public:
-        //constructors
-        FilledCube(vec4 center, float width ,float hight, float depth);
-		FilledCube(){}
-        virtual void render();
-        virtual void calculateNormals();
+// Solid box, one face normal per vertex.
+class FilledCube : public Drawable
+{
+public:
+	FilledCube(vec4 center, float width, float height, float depth);
 
-        //destructor
-        ~FilledCube();
+	void render() override;
+	void calculateNormals() override;
 };
 
 #endif

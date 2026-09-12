@@ -1,4 +1,4 @@
-#include <light_source.h>
+#include "light_source.h"
 
 LightSource::LightSource(vec4 position, color4 ambient,
                          color4 diffuse, color4 specular)

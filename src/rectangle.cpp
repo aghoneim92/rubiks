@@ -1,76 +1,54 @@
-#include <rectangle.h>
+#include "rectangle.h"
 
-Rectangle::Rectangle() {}
+namespace
+{
+
+void buildCorners(std::vector<vec4> &points, vec4 center, float width, float height)
+{
+	const vec4 dx = vec4(width / 2, 0.0, 0.0, 0.0);
+	const vec4 dy = vec4(0.0, height / 2, 0.0, 0.0);
+
+	points = {center - dx - dy, center - dx + dy, center + dx - dy, center + dx + dy};
+}
+
+} // namespace
 
 Rectangle::Rectangle(vec4 center, float width, float height)
 {
-	pointsNum = 4;
-	points = new vec4[pointsNum];
-	normals = new vec4[pointsNum];
-	vec4 dx = vec4(width / 2, 0.0, 0.0, 0.0);
-	vec4 dy = vec4(0.0, height / 2, 0.0, 0.0);
-
-	points[0] = center - dx - dy;
-	points[1] = center - dx + dy;
-	points[2] = center + dx - dy;
-	points[3] = center + dx + dy;
-
-	this->init();
+	buildCorners(points, center, width, height);
+	init();
 }
 
 void Rectangle::render()
 {
-	glBindVertexArrayAPPLE(vao);
-	glDrawArrays(GL_LINE_LOOP, 0, pointsNum);
-}
-
-Rectangle::~Rectangle()
-{
-	delete[] points;
-}
-
-void Rectangle::calculateNormals()
-{
-	;
+	glBindVertexArray(vao);
+	glDrawArrays(GL_LINE_LOOP, 0, static_cast<GLsizei>(points.size()));
 }
 
 //-------------
 // FILLED Rectangle CLASS
+
 FilledRectangle::FilledRectangle(vec4 center, float width, float height)
 {
-	pointsNum = 4;
-	points = new vec4[pointsNum];
-	normals = new vec4[pointsNum];
-	vec4 dx = vec4(width / 2, 0.0, 0.0, 0.0);
-	vec4 dy = vec4(0.0, height / 2, 0.0, 0.0);
-
-	points[0] = center - dx - dy;
-	points[1] = center - dx + dy;
-	points[2] = center + dx - dy;
-	points[3] = center + dx + dy;
-
-	this->init();
+	buildCorners(points, center, width, height);
+	init();
 }
 
-FilledRectangle::FilledRectangle(vec4 _points[4])
+FilledRectangle::FilledRectangle(const vec4 corners[4])
 {
-	pointsNum = 4;
-	points = new vec4[pointsNum];
-	normals = new vec4[pointsNum];
-	memcpy(points, _points, sizeof(vec4) * 4);
-	this->init();
+	points.assign(corners, corners + 4);
+	init();
 }
 
 void FilledRectangle::render()
 {
-	glBindVertexArrayAPPLE(vao);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, pointsNum);
+	glBindVertexArray(vao);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, static_cast<GLsizei>(points.size()));
 }
 
 void FilledRectangle::calculateNormals()
 {
-	int i;
-	vec4 normal = vec4(normalize(cross(points[2] - points[0], points[1] - points[0])), 0);
-	for (i = 0; i < 4; i++)
-		normals[i] = normal;
+	const vec4 normal = vec4(normalize(cross(points[2] - points[0], points[1] - points[0])), 0);
+	for (vec4 &n : normals)
+		n = normal;
 }

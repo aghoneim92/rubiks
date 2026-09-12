@@ -1,12 +1,12 @@
-#include <globalvariables.h>
+#include "globalvariables.h"
 
 //<--Shader variable locations
 
-//Viewing
+// Viewing
 GLuint model_view_loc = 0;
 GLuint projection_loc = 0;
 
-//Color
+// Color
 GLuint light_position_loc = 0;
 GLuint eye_position_loc = 0;
 GLuint ambient_product_loc = 0;
@@ -14,30 +14,32 @@ GLuint diffuse_product_loc = 0;
 GLuint specular_product_loc = 0;
 GLuint shininess_loc = 0;
 
-//Transform
+// Transform
 GLuint scale_loc = 0;
 GLuint rotation_loc = 0;
 GLuint rotation_after_loc = 0;
 GLuint translation_loc = 0;
 
-//SFX
+// SFX
 GLuint wavetime_loc = 0;
 GLuint wavewidth_loc = 0;
 GLuint waveheight_loc = 0;
-GLuint grayscale_loc;
+GLuint grayscale_loc = 0;
 GLuint water_loc = 0;
 GLuint dark_loc = 0;
 GLuint overlay_loc = 0;
 GLuint windowwidth_loc = 0;
 GLuint windowheight_loc = 0;
-GLuint redchrome_loc;
-GLuint greenchrome_loc;
-GLuint bluechrome_loc;
-GLuint left_loc;
+GLuint redchrome_loc = 0;
+GLuint greenchrome_loc = 0;
+GLuint bluechrome_loc = 0;
+
+// Picking
+GLuint depth_pass_loc = 0;
 //Shader variable locations-->
 
 //<--Viewing variables
-const bool fullScreen = true;
+bool fullScreen = false;
 //Default non-fullscreen window width and height
 GLfloat WindowWidth = 600;
 GLfloat WindowHeight = 600;
@@ -52,32 +54,33 @@ vec4 up(0.0, 1.0, 0.0, 0.0);
 mat4 mv;
 mat4 mp;
 
-ViewingMode viewMode;
+ViewingMode viewMode = PERSPECTIVE_WITH_FOV;
 
 // viewing volume
-GLfloat left = -400, right = 400;
-GLfloat bottom = -400, top = 400;
+GLfloat viewLeft = -400, viewRight = 400;
+GLfloat viewBottom = -400, viewTop = 400;
 GLfloat zNear = 1, zFar = 600;
 float zoomFactor = 1.0;
 float fovy = 45;
 //-->Viewing variables
 
 std::vector<Drawable *> shapes;
-std::vector<LightSource *> lights;
-std::vector<Drawable *> noise;
+std::vector<std::unique_ptr<LightSource>> lights;
+std::vector<std::unique_ptr<Drawable>> noise;
 std::vector<Material> GlowStep;
 
 //Three faces that can rotate: front, horizontal(top) and side.
-char moveTypes[] = {'f', 'h', 's'};
+const char moveTypes[3] = {'f', 'h', 's'};
 
 //Status of SFX
-GLfloat waveTime = 0, waveWidth = 2, waveHeight = 20, wavePeriod = 50, xScaleAmp = 0, yScaleAmp = 0, zScaleAmp = 0;
-const GLfloat sinArg = 0;
-bool grayScale = 0, waterEffect = 0, darkEffect = 0, noisy = 0, lsdEffect = 0, harlemShaked = 0;
+GLfloat waveTime = 0, waveWidth = 2, waveHeight = 20, wavePeriod = 50;
+GLfloat xScaleAmp = 0, yScaleAmp = 0, zScaleAmp = 0;
+bool grayScale = false, waterEffect = false, darkEffect = false;
+bool lsdEffect = false, harlemShaked = false;
 GLfloat redEffect = 1, greenEffect = 1, blueEffect = 1;
 
 //El bob el kebeer
-RubiksCube *rubiksCube;
+std::unique_ptr<RubiksCube> rubiksCube;
 
 //<--Animations and game logic
 
@@ -112,8 +115,7 @@ bool start = false;
 //-->Animations and game logic
 
 //Easter eggs! ;)
-const int nEasterEggs = 8;
-const std::string easterEggs[] = {
+const std::array<std::string, 8> easterEggs = {
 		"bw",
 		"imthirsty",
 		"itsdarkinhere",
@@ -126,4 +128,4 @@ const std::string easterEggs[] = {
 //Recording key presses to match with available easter eggs..
 std::string easterEgg;
 
-volatile bool stopAnim = false;
+bool stopAnim = false;

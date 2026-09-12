@@ -1,11 +1,8 @@
 #ifndef ANIMATIONS_H
 #define ANIMATIONS_H
-#include <globalvariables.h>
-#if !CROSS_PLATFORM
-#include <Windows.h>
-#include <mmsystem.h>
-#include "circle.h"
-#endif
+
+// Every animation is a self-rescheduling timer callback; the int argument is the
+// frame counter within that animation.
 
 void rotateFace(int animIndex);
 void animateWater(int unused);

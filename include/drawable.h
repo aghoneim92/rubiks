@@ -2,55 +2,49 @@
 #define __DRAWABLE_H__
 
 #include "Angel.h"
-#include "material.h"
 #include "light_source.h"
+#include "material.h"
+
 #include <vector>
 
-class Drawable {
-    public:
-        static GLuint shaderProgram;
+// A chunk of geometry with its own transform and material.  Subclasses fill in
+// `points`, then call init() to upload them.
+class Drawable
+{
+public:
+	static GLuint shaderProgram;
 
-		vec3 scale;
-		vec3 translation;
-		vec3 rotation;
-		vec3 rotationAfter;
+	vec3 scale = vec3(1.0f, 1.0f, 1.0f);
+	vec3 translation = vec3(0.0f, 0.0f, 0.0f);
+	vec3 rotation = vec3(0.0f, 0.0f, 0.0f);
+	vec3 rotationAfter = vec3(0.0f, 0.0f, 0.0f);
 
-        int pointsNum;
-        vec4* points;
-        vec4* normals;
-		//vec3 rotation;
-        Material material;
+	std::vector<vec4> points;
+	std::vector<vec4> normals;
+	Material material;
 
-		bool overlay;
+	bool overlay = false;
 
-        Drawable();
+	Drawable() = default;
+	Drawable(const Drawable &) = delete;
+	Drawable &operator=(const Drawable &) = delete;
+	virtual ~Drawable();
 
-        //methods
-        // copy points and colors back to opengl buffers
-        void update();
-        //calculate a unit normal vector for each vertex
-        virtual void calculateNormals();
+	// Copies points and normals back into the GL buffers.
+	void update();
 
-        virtual void render();
+	// Calculates a unit normal vector for each vertex.
+	virtual void calculateNormals() {}
 
-        //destructor
-        ~Drawable();
+	virtual void render() {}
 
-    protected:
+protected:
+	// Allocates the buffers and uploads whatever is currently in `points`.
+	void init();
 
-        bool normalsCalculated;
-        bool wireframe;
-
-        //vertex array object
-        GLuint vao;
-
-        //vertex buffer
-        GLuint vbuffer;
-
-        //color buffer
-        GLuint nbuffer;
-
-        void init();
+	GLuint vao = 0;
+	GLuint vbuffer = 0;
+	GLuint nbuffer = 0;
 };
 
 #endif

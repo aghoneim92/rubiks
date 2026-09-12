@@ -3,25 +3,26 @@
 
 #include "drawable.h"
 
-class Rectangle : public Drawable {
-    public:
-        //constructors
-        Rectangle(vec4 center, float width ,float height);
-		Rectangle();
-        //methods
-        virtual void render();
-		virtual void calculateNormals();
-        //destructor
-        ~Rectangle();
+// Wireframe quad.
+class Rectangle : public Drawable
+{
+public:
+	Rectangle() = default;
+	Rectangle(vec4 center, float width, float height);
+
+	void render() override;
+	void calculateNormals() override {}
 };
 
-class FilledRectangle : public Rectangle {
-    public:
-        //constructors
-        FilledRectangle(vec4 center, float width ,float height);
-		FilledRectangle(vec4 _points[4]);
-        virtual void render();
-		virtual void calculateNormals();
+// Solid quad, one shared normal.
+class FilledRectangle : public Rectangle
+{
+public:
+	FilledRectangle(vec4 center, float width, float height);
+	explicit FilledRectangle(const vec4 corners[4]);
+
+	void render() override;
+	void calculateNormals() override;
 };
 
 #endif

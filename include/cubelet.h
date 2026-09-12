@@ -1,19 +1,31 @@
 #ifndef CUBELET_H
 #define CUBELET_H
-#include "cube.h"
-#include "rectangle.h"
-#include "drawablegroup.h"
 
-class Cubelet:public DrawableGroup{
+#include "cube.h"
+#include "drawablegroup.h"
+#include "rectangle.h"
+
+#include <memory>
+
+// One of the 27 small cubes: six coloured stickers plus the twelve black rims
+// that frame them.  The cubelet owns all of that geometry.
+class Cubelet : public DrawableGroup
+{
 public:
-	Cubelet(vec3 offset);
-	Cubelet();
+	Cubelet() = default;
+	explicit Cubelet(vec3 offset);
+
+	// Steps the rims one frame towards white (direction 1) or back towards black
+	// (direction -1), over nFrames frames.
 	void glowRims(int nFrames, short direction);
 	void resetRims();
-protected:
-	vec3 offset;
-	Drawable* blackRims[12];
-	friend class RubiksCube;
+
+	const vec3 &getOffset() const { return offset; }
+
+private:
+	vec3 offset = vec3(0.0f, 0.0f, 0.0f);
+	std::vector<std::unique_ptr<Drawable>> owned;
+	std::vector<Drawable *> blackRims;
 };
 
 #endif

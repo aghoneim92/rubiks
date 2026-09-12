@@ -1,4 +1,10 @@
-#include <animations.h>
+#include "animations.h"
+
+#include "globalvariables.h"
+#include "initfunctions.h"
+#include "platform.h"
+
+#include <cstdlib>
 
 void rotateFace(int animIndex)
 {
@@ -28,7 +34,6 @@ void rotateFace(int animIndex)
 		{
 			if (rubiksCube->checkWin())
 			{
-				//				PlaySound(TEXT("win.wav"), NULL, SND_ASYNC);
 				initGlowStep();
 				glowCube(0);
 			}
@@ -49,7 +54,7 @@ void rotateFace(int animIndex)
 		rubiksCube->rotateSide(faceIndex, rotDir * M_PI / 200);
 	}
 
-	glutTimerFunc(10, rotateFace, animIndex + 1);
+	platform::setTimer(10, rotateFace, animIndex + 1);
 }
 void initGlowStep()
 {
@@ -88,9 +93,6 @@ void shuffle()
 		moveType = 's';
 		break;
 	}
-#if !CROSS_PLATFORM
-	PlaySound(TEXT("drag.wav"), NULL, SND_ASYNC);
-#endif
 	rotateFace(0);
 }
 
@@ -119,7 +121,7 @@ void glowRims(int animIndex)
 		glowIndex = newGlowIndex;
 		direction = 1;
 		glowFace = newGlowFace;
-		if (glowIndex == 3)
+		if (glowIndex == noGlowIndex)
 			return;
 		glowRims(0);
 		return;
@@ -143,7 +145,7 @@ void glowRims(int animIndex)
 		rubiksCube->glowRimsHorizontal(glowIndex, totalFrames, direction);
 		break;
 	}
-	glutTimerFunc(10, glowRims, animIndex + 1);
+	platform::setTimer(10, glowRims, animIndex + 1);
 }
 
 void glowCube(int animIndex)
@@ -168,22 +170,15 @@ void glowCube(int animIndex)
 		shapes[i]->material.diffuseK.w = 1;
 	}
 
-	glutTimerFunc(10, glowCube, animIndex + 1);
+	platform::setTimer(10, glowCube, animIndex + 1);
 }
 
 void floatView(int animIndex)
 {
 	if (stopAnim)
-	{
-		std::cout << "Stopped!" << std::endl;
-		glutTimerFunc(10, floatView, animIndex);
 		return;
-	}
 	if (animIndex == 100 && dir == 'l')
 	{
-#if !CROSS_PLATFORM
-		PlaySound(TEXT("swoosh2.wav"), NULL, SND_ASYNC);
-#endif
 		animateAssemble(0);
 		return;
 	}
@@ -196,19 +191,16 @@ void floatView(int animIndex)
 	}
 	mat4 my = RotateY(dir == 'l' ? 0.5f : -0.5f);
 	eye = my * eye;
-	glutTimerFunc(10, floatView, animIndex + 1);
+	platform::setTimer(10, floatView, animIndex + 1);
 }
 
 void animateAssemble(int unused)
 {
-#if !CROSS_PLATFORM
-	PlaySound(TEXT("ShuffleNote.wav"), NULL, SND_ASYNC);
-#endif
 	mat4 rotation = RotateY(-10);
 	eye = rotation * eye;
 	if (!rubiksCube->assemble())
 	{
-		glutTimerFunc(10, animateAssemble, 0);
+		platform::setTimer(10, animateAssemble, 0);
 	}
 	else
 	{
@@ -225,7 +217,7 @@ void animateWater(int unused)
 		return;
 	waveTime += wavePeriod / 1000;
 	glUniform1f(wavetime_loc, waveTime);
-	glutTimerFunc((unsigned int)wavePeriod, animateWater, 0);
+	platform::setTimer((unsigned int)wavePeriod, animateWater, 0);
 }
 
 void animateLSD(int animIndex)
@@ -256,22 +248,16 @@ void animateLSD(int animIndex)
 	{
 		shapes[i]->scale = vec3(xScale, yScale, zScale);
 	}
-	glutTimerFunc(10, animateLSD, animIndex + 1);
+	platform::setTimer(10, animateLSD, animIndex + 1);
 }
 
 void animateNoise(int animIndex)
 {
 	if (!grayScale)
 		return;
-	GLfloat x, y;
-	unsigned int i;
-	for (i = 0; i < noise.size(); i++)
-	{
-		x = 2 * (rand() % 2 - 0.5) * (rand() % ((int)WindowWidth / 6));
-		y = 2 * (rand() % 2 - 0.5) * (rand() % ((int)WindowHeight / 3));
-		noise[i]->translation = vec3(x, y, 0);
-	}
-	glutTimerFunc(10, animateNoise, animIndex);
+	for (std::unique_ptr<Drawable> &speck : noise)
+		speck->translation = randomNoisePosition();
+	platform::setTimer(10, animateNoise, animIndex);
 }
 
 short shakeDir = 1;
@@ -330,7 +316,7 @@ void animateHarlemShake1(int animIndex)
 	{
 		shapes[i]->translation = vec3(0, 0, shapes[i]->translation.z + (shakeDir == 1 ? 2.5f : -2.5f));
 	}
-	glutTimerFunc(10, animateHarlemShake1, animIndex + 1);
+	platform::setTimer(10, animateHarlemShake1, animIndex + 1);
 }
 
 void animateHarlemShake2(int animIndex)
@@ -362,7 +348,7 @@ void animateHarlemShake2(int animIndex)
 					rubiksCube->rotateCubelet(i, j, k, shakeDir * DegreesToRadians * shakeMag[i][j][k] / 52.0f);
 					break;
 				}
-	glutTimerFunc(10, animateHarlemShake2, animIndex + 1);
+	platform::setTimer(10, animateHarlemShake2, animIndex + 1);
 }
 
 void animateHarlemShake3(int animIndex)
@@ -392,5 +378,5 @@ void animateHarlemShake3(int animIndex)
 					rubiksCube->rotateCubelet(i, j, k, shakeDir * DegreesToRadians * shakeMag[i][j][k] / 200.0f);
 					break;
 				}
-	glutTimerFunc(10, animateHarlemShake3, animIndex + 1);
+	platform::setTimer(10, animateHarlemShake3, animIndex + 1);
 }

@@ -1,40 +1,29 @@
-#include <circle.h>
-//-----------
-// FILLED CIRCLE
+#include "circle.h"
 
-//constructors
-FilledCircle::FilledCircle(vec4 center, GLfloat radius, int np)
+FilledCircle::FilledCircle(vec4 center, GLfloat radius, int segments)
 {
-    pointsNum = np + 1; //np + center point
-
-    points = new vec4[pointsNum];
-    normals = new vec4[pointsNum];
-    points[0] = center;
-    for (int i = 0; i < np; i++)
-    {
-        double angle = 360.0 / (np - 1) * i;
-        double rad = angle / 180.0 * 3.1415;
-        points[i + 1] = center + vec4(radius * cos(rad), radius * sin(rad), 0.0, 0.0);
-    }
-    this->init();
+	points.reserve(segments + 1); // segments + the centre point
+	points.push_back(center);
+	for (int i = 0; i < segments; i++)
+	{
+		const double angle = 360.0 / (segments - 1) * i;
+		const double radians = angle / 180.0 * 3.1415;
+		points.push_back(center + vec4(radius * cos(radians), radius * sin(radians), 0.0, 0.0));
+	}
+	init();
 }
 
 void FilledCircle::render()
 {
-    glBindVertexArrayAPPLE(vao);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, pointsNum);
-}
-
-FilledCircle::~FilledCircle()
-{
-    delete[] points;
+	glBindVertexArray(vao);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, static_cast<GLsizei>(points.size()));
 }
 
 void FilledCircle::calculateNormals()
 {
-    vec4 l0 = points[pointsNum / 2] - points[0], l1 = points[1] - points[0];
-    int i;
-    vec4 normal = vec4(cross(l1, l0), 0);
-    for (i = 0; i < pointsNum; i++)
-        normals[i] = normal;
+	const vec4 l0 = points[points.size() / 2] - points[0];
+	const vec4 l1 = points[1] - points[0];
+	const vec4 normal = vec4(cross(l1, l0), 0);
+	for (vec4 &n : normals)
+		n = normal;
 }

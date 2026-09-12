@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<title>Rubik's Cube</title>
+		<style>
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				overflow: hidden;
+				background: #fff;
+				font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+			}
+			canvas#canvas {
+				display: block;
+				width: 100vw;
+				height: 100vh;
+				outline: none;
+			}
+			#loading {
+				position: fixed;
+				inset: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: #444;
+				font-size: 14px;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				pointer-events: none;
+				transition: opacity 0.4s ease;
+			}
+			#hint {
+				position: fixed;
+				left: 50%;
+				bottom: 18px;
+				transform: translateX(-50%);
+				color: #999;
+				font-size: 12px;
+				text-align: center;
+				pointer-events: none;
+				user-select: none;
+			}
+			kbd {
+				background: #f2f2f2;
+				border: 1px solid #ddd;
+				border-bottom-width: 2px;
+				border-radius: 4px;
+				padding: 1px 5px;
+				font-size: 11px;
+				color: #555;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas" tabindex="-1" oncontextmenu="event.preventDefault()"></canvas>
+		<div id="loading">Loading…</div>
+		<div id="hint">
+			<kbd>←</kbd> <kbd>→</kbd> pick a face &middot; <kbd>↑</kbd> <kbd>↓</kbd> pick a slice
+			&middot; <kbd>+</kbd> <kbd>−</kbd> turn it &middot; <kbd>W</kbd> <kbd>A</kbd>
+			<kbd>S</kbd> <kbd>D</kbd> orbit &middot; or drag a face with the mouse
+		</div>
+
+		<script>
+			var canvas = document.getElementById("canvas");
+			var Module = {
+				canvas: canvas,
+				print: function (text) {
+					console.log(text);
+				},
+				printErr: function (text) {
+					console.error(text);
+				},
+				onRuntimeInitialized: function () {
+					var loading = document.getElementById("loading");
+					loading.style.opacity = "0";
+					setTimeout(function () {
+						loading.remove();
+					}, 400);
+					canvas.focus();
+				},
+			};
+			// Keep the arrow keys and space from scrolling the page.
+			window.addEventListener(
+				"keydown",
+				function (event) {
+					if (
+						[" ", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(event.key) !== -1
+					) {
+						event.preventDefault();
+					}
+				},
+				{ passive: false }
+			);
+		</script>
+		{{{ SCRIPT }}}
+	</body>
+</html>

@@ -2,21 +2,16 @@
 //
 //  --- Angel.h ---
 //
-//   The main header file for all examples from Angel 6th Edition
+//   Vector/matrix helpers from Angel 6th Edition, plus the GL headers.
 //
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef __ANGEL_H__
 #define __ANGEL_H__
 
-//----------------------------------------------------------------------------
-//
-// --- Include system headers ---
-//
-
 #include <cmath>
+#include <cstdio>
 #include <iostream>
-#include <stdio.h>
 
 //  Define M_PI in the case it's not defined in the math header file
 #ifndef M_PI
@@ -25,22 +20,25 @@
 
 //----------------------------------------------------------------------------
 //
-// --- Include OpenGL header files and helpers ---
+// --- GL headers ---
 //
-//   The location of these files vary by operating system.  We've included
-//     copies of open-soruce project headers in the "GL" directory local
-//     this this "include" directory.
+//  The desktop builds run against legacy OpenGL (2.1 on macOS, whatever GLEW
+//  finds elsewhere); the web build runs against WebGL 2 through GLES 3.
 //
 
-#ifdef __APPLE__ // include Mac OS X verions of headers
-#define GL_SILENCE_DEPRECATION TRUE
-#include <GLUT/glut.h>
-// #  include <OpenGL/gl3.h>
-#else // non-Mac OS X operating systems
+#if defined(__EMSCRIPTEN__)
+#include <GLES3/gl3.h>
+#elif defined(__APPLE__)
+#define GL_SILENCE_DEPRECATION 1
+#include <OpenGL/gl.h>
+#include <OpenGL/glext.h>
+// macOS only exposes vertex array objects through ARB_/APPLE_vertex_array_object.
+#define glGenVertexArrays glGenVertexArraysAPPLE
+#define glBindVertexArray glBindVertexArrayAPPLE
+#define glDeleteVertexArrays glDeleteVertexArraysAPPLE
+#else
 #include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <GL/freeglut_ext.h>
-#endif // __APPLE__
+#endif
 
 // Define a helpful macro for handling offsets into buffer objects
 #define BUFFER_OFFSET(offset) ((GLvoid *)(offset))
@@ -52,14 +50,6 @@
 
 namespace Angel
 {
-
-//  Helper function to load vertex and fragment shader files
-GLuint InitShader(const char *vertexShaderFile,
-									const char *fragmentShaderFile /*,
-		   const char* geometryShaderFile,
-		   const char* tesselationControlShaderFile,
-		   const char* tesselationEvaluationShaderFile*/
-);
 
 //  Defined constant for when numbers are too small to be used in the
 //    denominator of a division operation.  This is only used if the
@@ -73,13 +63,6 @@ const GLfloat DegreesToRadians = M_PI / 180.0f;
 
 #include "vec.h"
 #include "mat.h"
-#include "CheckError.h"
-
-#define Print(x)                               \
-	do                                           \
-	{                                            \
-		std::cerr << #x " = " << (x) << std::endl; \
-	} while (0)
 
 //  Globally use our namespace in our example programs.
 using namespace Angel;

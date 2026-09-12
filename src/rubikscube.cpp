@@ -1,5 +1,7 @@
-#include <rubikscube.h>
+#include "rubikscube.h"
+
 #include <cfloat>
+#include <cmath>
 
 void RubiksCube::glowRimsFront(int index, int nFrames, short direction)
 {
@@ -97,14 +99,18 @@ void RubiksCube::rotateFront(int index, float angle)
 		}
 }
 
-void RubiksCube::finalizeRotationCommon(vec3Int indexSet)
+void RubiksCube::clearRotationAfter(vec3Int indexSet)
 {
-	cubelets[indexSet.x][indexSet.y][indexSet.z].rotateAfter(-cubelets[indexSet.x][indexSet.y][indexSet.z].getRotationAfter());
-	int i;
-	for (i = 0; i < _size; i++)
+	Cubelet &cubelet = cubelets[indexSet.x][indexSet.y][indexSet.z];
+	cubelet.rotateAfter(-cubelet.getRotationAfter());
+}
+
+void RubiksCube::uploadAll()
+{
+	for (Drawable *child : children)
 	{
-		children[i]->calculateNormals();
-		children[i]->update();
+		child->calculateNormals();
+		child->update();
 	}
 }
 
@@ -117,8 +123,9 @@ void RubiksCube::finalizeRotationFront(int index, short direction)
 		{
 			indexSet = indices[i][j][index];
 			cubelets[indexSet.x][indexSet.y][indexSet.z].rotatePermanentZ(direction * M_PI / 2);
-			finalizeRotationCommon(indexSet);
+			clearRotationAfter(indexSet);
 		}
+	uploadAll();
 }
 
 void RubiksCube::finalizeRotationSide(int index, short direction)
@@ -130,8 +137,9 @@ void RubiksCube::finalizeRotationSide(int index, short direction)
 		{
 			indexSet = indices[index][j][k];
 			cubelets[indexSet.x][indexSet.y][indexSet.z].rotatePermanentX(direction * M_PI / 2);
-			finalizeRotationCommon(indexSet);
+			clearRotationAfter(indexSet);
 		}
+	uploadAll();
 }
 
 void RubiksCube::finalizeRotationHorizontal(int index, short direction)
@@ -143,8 +151,9 @@ void RubiksCube::finalizeRotationHorizontal(int index, short direction)
 		{
 			indexSet = indices[i][index][k];
 			cubelets[indexSet.x][indexSet.y][indexSet.z].rotatePermanentY(direction * M_PI / 2);
-			finalizeRotationCommon(indexSet);
+			clearRotationAfter(indexSet);
 		}
+	uploadAll();
 }
 
 void RubiksCube::rotateSide(int index, float angle)
@@ -165,8 +174,7 @@ void RubiksCube::updateIndicesSide(int index, short direction)
 {
 	int j, k;
 	vec3Int toRotate;
-	vec3Int oldIndices[3][3][3];
-	memcpy(oldIndices, indices, sizeof(vec3Int) * 27);
+	const auto oldIndices = indices;
 	for (j = 0; j < 3; j++)
 		for (k = 0; k < 3; k++)
 		{
@@ -177,8 +185,7 @@ void RubiksCube::updateIndicesSide(int index, short direction)
 
 	//Front and Top
 	vec3Int center = vec3Int((index - 1) * 2, 0, 0);
-	vec3Int oldColorIndices[7][7][7];
-	memcpy(oldColorIndices, colorIndices, sizeof(vec3Int) * 7 * 7 * 7);
+	const auto oldColorIndices = colorIndices;
 	for (j = 0; j < 5; j++)
 	{
 		for (k = 0; k < 5; k++)
@@ -209,8 +216,7 @@ void RubiksCube::updateIndicesFront(int index, short direction)
 {
 	int i, j;
 	vec3Int toRotate;
-	vec3Int oldIndices[3][3][3];
-	memcpy(oldIndices, indices, sizeof(vec3Int) * 27);
+	const auto oldIndices = indices;
 	for (i = 0; i < 3; i++)
 		for (j = 0; j < 3; j++)
 		{
@@ -221,8 +227,7 @@ void RubiksCube::updateIndicesFront(int index, short direction)
 
 	//Side and Top
 	vec3Int center = vec3Int(0, 0, (index - 1) * 2);
-	vec3Int oldColorIndices[7][7][7];
-	memcpy(oldColorIndices, colorIndices, sizeof(vec3Int) * 7 * 7 * 7);
+	const auto oldColorIndices = colorIndices;
 	for (i = 0; i < 5; i++)
 	{
 		for (j = 0; j < 5; j++)
@@ -338,8 +343,7 @@ void RubiksCube::updateIndicesHorizontal(int index, short direction)
 {
 	int i, k;
 	vec3Int toRotate;
-	vec3Int oldIndices[3][3][3];
-	memcpy(oldIndices, indices, sizeof(vec3Int) * 27);
+	const auto oldIndices = indices;
 	for (i = 0; i < 3; i++)
 		for (k = 0; k < 3; k++)
 		{
@@ -350,8 +354,7 @@ void RubiksCube::updateIndicesHorizontal(int index, short direction)
 
 	//Side and front
 	vec3Int center = vec3Int(0, (index - 1) * 2, 0);
-	vec3Int oldColorIndices[7][7][7];
-	memcpy(oldColorIndices, colorIndices, sizeof(vec3Int) * 7 * 7 * 7);
+	const auto oldColorIndices = colorIndices;
 	for (i = 0; i < 5; i++)
 	{
 		for (k = 0; k < 5; k++)
@@ -390,15 +393,13 @@ RubiksCube::RubiksCube()
 				indices[i][j][k] = vec3Int(i, j, k);
 			}
 
-	_size = 27 * cubelets[0][0][0].size();
-	children = new Drawable *[_size];
-	int offset = 0;
+	children.reserve(27 * cubelets[0][0][0].size());
 	for (i = 0; i < 3; i++)
 		for (j = 0; j < 3; j++)
 			for (k = 0; k < 3; k++)
 			{
-				memcpy(children + offset, cubelets[i][j][k].getChildren(), sizeof(Drawable *) * cubelets[0][0][0].size());
-				offset += cubelets[0][0][0].size();
+				const std::vector<Drawable *> &cubeletChildren = cubelets[i][j][k].getChildren();
+				children.insert(children.end(), cubeletChildren.begin(), cubeletChildren.end());
 			}
 
 	//Front Faces
@@ -467,35 +468,26 @@ RubiksCube::RubiksCube()
 
 bool RubiksCube::assemble()
 {
-	int i;
-	bool ret = true;
-	for (i = 0; i < _size; i++)
-	{
-		if (abs(children[i]->translation.x) > FLT_EPSILON)
+	bool assembled = true;
+	for (Drawable *child : children)
+		for (int axis = 0; axis < 3; axis++)
 		{
-			ret = false;
-			children[i]->translation.x += children[i]->translation.x > 0 ? -1 : 1;
+			GLfloat &offset = child->translation[axis];
+			if (std::abs(offset) > FLT_EPSILON)
+			{
+				assembled = false;
+				offset += offset > 0 ? -1 : 1;
+			}
 		}
-		if (abs(children[i]->translation.y) > FLT_EPSILON)
-		{
-			ret = false;
-			children[i]->translation.y += children[i]->translation.y > 0 ? -1 : 1;
-		}
-		if (abs(children[i]->translation.z) > FLT_EPSILON)
-		{
-			ret = false;
-			children[i]->translation.z += children[i]->translation.z > 0 ? -1 : 1;
-		}
-	}
-	return ret;
+	return assembled;
 }
 
 void RubiksCube::translateCubelet(int i, int j, int k, vec3 translation)
 {
-	cubelets[i][j][k].translate(vec3(cubelets[i][j][k].offset.x * translation.x,
-																	 cubelets[i][j][k].offset.y * translation.y,
-																	 cubelets[i][j][k].offset.z * translation.z));
-	//cubelets[i][j][k].translate(translation);
+	const vec3 &offset = cubelets[i][j][k].getOffset();
+	cubelets[i][j][k].translate(vec3(offset.x * translation.x,
+																	 offset.y * translation.y,
+																	 offset.z * translation.z));
 }
 
 void RubiksCube::translateCubeletNormal(int i, int j, int k, vec3 translation)
