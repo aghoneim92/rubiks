@@ -1,0 +1,24 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "rubiks",
+	"compatibility_date": "2026-09-11",
+
+	// The WebAssembly build output. Produced by:
+	//   emcmake cmake -S . -B build-web -DCMAKE_BUILD_TYPE=Release
+	//   cmake --build build-web
+	// It is not checked in, so build before deploying.
+	"assets": {
+		"directory": "./build-web/dist"
+	},
+
+	"routes": [
+		{
+			"pattern": "rubiks.ahmedghoneim.online",
+			"custom_domain": true
+		}
+	],
+
+	"observability": {
+		"enabled": true
+	}
+}

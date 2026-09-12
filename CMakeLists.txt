@@ -61,7 +61,13 @@ target_include_directories(Cube PRIVATE
 # Platform wiring
 # ---------------------------------------------------------------------------
 if(EMSCRIPTEN)
-    set_target_properties(Cube PROPERTIES OUTPUT_NAME index SUFFIX ".html")
+    # Emscripten emits index.html/.js/.wasm next to the target output.  Put them
+    # in their own directory so the publishable bundle holds exactly those files
+    # and none of the CMake build tree.
+    set_target_properties(Cube PROPERTIES
+        OUTPUT_NAME index
+        SUFFIX ".html"
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/dist")
     target_link_options(Cube PRIVATE
         -sMIN_WEBGL_VERSION=2
         -sMAX_WEBGL_VERSION=2

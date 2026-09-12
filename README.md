@@ -30,11 +30,11 @@ emcmake cmake -S . -B build-web -DCMAKE_BUILD_TYPE=Release
 cmake --build build-web
 ```
 
-That writes `index.html`, `index.js` and `index.wasm` into `build-web/`. They need
+That writes `index.html`, `index.js` and `index.wasm` into `build-web/dist/`. They need
 to be served over HTTP rather than opened from disk:
 
 ```
-cd build-web && python3 -m http.server 8000
+cd build-web/dist && python3 -m http.server 8000
 ```
 
 then open <http://localhost:8000>.
@@ -62,6 +62,20 @@ development libraries visible to CMake:
 cmake -S . -B build
 cmake --build build --config Release
 ```
+
+## Deploying
+
+The web build is served from Cloudflare as a Worker with static assets;
+`wrangler.jsonc` holds the project name and the custom domain. Build first, then:
+
+```
+npx wrangler deploy
+```
+
+`assets.directory` points at `build-web/dist`, which holds exactly the three
+published files, so nothing from the CMake build tree is uploaded.
+
+Live at <https://rubiks.ahmedghoneim.online>.
 
 ## Layout
 
